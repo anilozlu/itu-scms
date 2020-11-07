@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <title>ITU SCMS - {% block title %}{% endblock %}</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='bulma.css') }}"/>
+        <link rel="stylesheet" href="{{ url_for('static', filename='scms.css') }}"/>
+    </head>
+    <body>
+        <header>
+            <nav class="navbar" aria_label="main navigation">
+                <div class="navbar-brand">
+                    <span class="navbar-item">
+                        <a class="button is-link" href="{{ url_for('home_page') }}">Home Page</a>
+                    </span>
+                    <span class="navbar-item">
+                        <a class="button is-link" href="{{ url_for('clubs_page') }}">Club List</a>
+                    </span>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <section class="section">
+                <div class="content">
+                    {% block content %}{% endblock %}
+                </div>
+            </section>
+        </main>
+    </body>
+</html>
