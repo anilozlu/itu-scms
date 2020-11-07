@@ -1,14 +1,14 @@
 from flask import Flask, render_template
 
-app = Flask(__name__)
+import views
 
-@app.route("/")
-def home_page():
-    return render_template("home.html")
-
-@app.route("/clubs")
-def clubs_page():
-    return render_template("clubs.html")
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object("settings")
+    app.add_url_rule("/", view_func=views.home_page)
+    app.add_url_rule("/movies", view_func=views.clubs_page)
+    return app
 
 if __name__ == "__main__":
+    app = create_app()
     app.run(host="0.0.0.0", port = 8080, debug = True)
