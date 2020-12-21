@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-from flaskext.mysql import MySQL
+import mysql.connector
 import views
 
 def create_app():
