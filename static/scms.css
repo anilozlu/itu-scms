@@ -11,6 +11,6 @@
 .bg-blue a{
   color:white;
 }
-.navbar-item a:hover {
-  background-color:#00d1b2;
+.navbar-off a:hover {
+  color:#00d1b2 !important;
 }
