@@ -5,3 +5,6 @@ def home_page():
 
 def clubs_page():
     return render_template("clubs.html")
+
+def create_club():
+    return render_template("create_club.html")

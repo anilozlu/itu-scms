@@ -14,3 +14,6 @@
 .navbar-off a:hover {
   color:#00d1b2 !important;
 }
+.is-primary:hover{
+  color:#3273dc !important;
+}
