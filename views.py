@@ -69,3 +69,12 @@ def create_club():
         mycursor.execute("SELECT * FROM Clubs;")
         mydb.commit()
         return redirect(url_for("create_club"))
+
+def students_page():
+    mycursor.execute("SELECT * FROM Students")
+    students = list(mycursor)
+    if students:
+        length = len(students)
+    else:
+        length = 0
+    return render_template("students.html", len = length, students = students)

@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block title %} Students {% endblock %}
+{% block content %}
+        <table class="table">
+            <tr>
+                <th>Student Name</th>
+            </tr>
+            {% if (len>0) %}
+            {% for i in range(0, len) %}
+            <tr>
+                <td>{{students[i][3]}}</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </table>
+{% endblock %}
