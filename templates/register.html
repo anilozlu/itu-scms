@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block title %} Register {% endblock %}
+{% block content %}
+        <h1 class="title">Register to start using this site!</h1>
+        <p class="subtitle">You need to register with your itu.edu.tr email address to use this site.</p>
+        <form action="" method="post" name="club_create">
+            <div class="field">
+                <label for="mail" class="label">Email address</label>
+                <div class="control">
+                    <input type="email" name="mail" class="input" required="required" placeholder="Email"/>
+                </div>
+            </div>
+            <div class="field">
+                <label for="name" class="label">Your name and surname</label>
+                <div class="control">
+                    <input type="text" name="name" class="input" required="required" placeholder="Name and surname"/>
+                </div>
+            </div>
+            <div class="field">
+                <label for="password" class="label">Password</label>
+                <div class="control">
+                    <input type="password" name="password" class="input" required="required" placeholder="Password"/>
+                </div>
+            </div>
+            <div class="field is-grouped">
+                <div class="control">
+                    <button class="button is-primary">Register</button>
+                </div>
+            </div>
+        </form>
+{% endblock %}

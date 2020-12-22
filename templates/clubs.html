@@ -4,12 +4,15 @@
         <table class="table">
             <tr>
                 <th>Club Name</th>
+                <th>Club Description</th>
             </tr>
+            {% if (len>0) %}
+            {% for i in range(0, len) %}
             <tr>
-                <td>Sample Club 1</td>
+                <td>{{clubs[i][1]}}</td>
+                <td>{{clubs[i][2]|truncate(400)}}</td>
             </tr>
-            <tr>
-                <td>Sample Club 2</td>
-            </tr>
+            {% endfor %}
+            {% endif %}
         </table>
 {% endblock %}
