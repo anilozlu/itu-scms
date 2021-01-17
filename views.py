@@ -190,14 +190,12 @@ def club_page(club_id):
                 mydb.commit()
                 flash("You have joined this club.")
             elif request.form["club_join"] == "leave":
-                mycursor.execute("DELETE Club_students FROM Club_students INNER JOIN Students ON Club_students.user_id=Students.user_id WHERE Students.user_id = " + str(user_id) + " AND Club_students.club_id = " + str(club_id) + ";")
-                mycursor.execute("DELETE Student_clubs FROM Student_clubs INNER JOIN Students ON Student_clubs.user_id=Students.user_id WHERE Students.user_id = " + str(user_id) + " AND Student_clubs.club_id = " + str(club_id) + ";")
+                mycursor.execute("DELETE Club_students,Student_clubs FROM Club_students INNER JOIN Student_clubs ON Club_students.user_id=Student_clubs.user_id AND Club_students.club_id=Student_clubs.club_id INNER JOIN Students ON Students.user_id=Club_students.user_id WHERE Students.user_id = " + str(user_id) + " AND Club_students.club_id = " + str(club_id) + ";")
                 mydb.commit()
                 flash("You have left this club.")
         elif "member_kick" in request.form:
             kick_id = request.form["member_kick"]
-            mycursor.execute("DELETE Club_students FROM Club_students INNER JOIN Students ON Club_students.user_id=Students.user_id WHERE Students.user_id = " + str(user_id) + " AND Club_students.club_id = " + str(club_id) + ";")
-            mycursor.execute("DELETE Student_clubs FROM Student_clubs INNER JOIN Students ON Student_clubs.user_id=Students.user_id WHERE Students.user_id = " + str(user_id) + " AND Student_clubs.club_id = " + str(club_id) + ";")
+            mycursor.execute("DELETE Club_students,Student_clubs FROM Club_students INNER JOIN Student_clubs ON Club_students.user_id=Student_clubs.user_id AND Club_students.club_id=Student_clubs.club_id INNER JOIN Students ON Students.user_id=Club_students.user_id WHERE Students.user_id = " + str(kick_id) + " AND Club_students.club_id = " + str(club_id) + ";")
         return redirect(url_for("club_page", club_id = club_id))
     return render_template("club.html", club=club[0], members=members, member_of=member_of, admin=admin)
 @login_required
