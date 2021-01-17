@@ -34,6 +34,9 @@
                     <span class="navbar-item navbar-off">
                         <a class="navbar-item" href="{{ url_for('logout_page') }}">Log out</a>
                     </span>
+                    <span class="navbar-item navbar-off">
+                        <a class="navbar-item" href="{{ url_for('student_page', member_id= current_user.username) }}">Profile Page</a>
+                    </span>
                     {% endif %}
                     <span class="navbar-item navbar-off">
                         <a class="navbar-item" href="{{ url_for('clubs_page') }}">Club List</a>
