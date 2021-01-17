@@ -12,21 +12,37 @@
             <tr>
                 <th>Club Name</th>
                 <th>Club Description</th>
+                {% if admin %}
+                <th></th>
+                {% endif %}
             </tr>
             <tr>
                 {% for element in club %}
                 <td>{{element}}</td>
                 {% endfor %}
+                {% if admin %}
+                <td></td>
+                {% endif %}
             </tr>
             <tr>
                 <th>Member Names</th>
                 <th>Member E-mails</th>
+                {% if admin %}
+                <th>Kick Member</th>
+                {% endif %}
             </tr>
             <tr>
                 {% if members %}
                     {% for member in members %}
                     <td><a href="{{ url_for('student_page', member_id=member[0]) }}">{{member[1]}}</a></td>
                     <td>{{member[2]}}</td>
+                    {% if admin %}
+                        <td>
+                            <form action="" method="post">
+                                <button class = "button is-danger is-pulled-right" name="member_kick" value="kick">Kick</button>
+                            </form>
+                        </td>
+                    {% endif %}
                     {% endfor %}
                 {% endif %}
             </tr>

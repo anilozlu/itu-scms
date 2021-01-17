@@ -45,6 +45,14 @@ mycursor.execute("""CREATE TABLE IF NOT EXISTS Club_students(
     PRIMARY KEY (user_id, club_id),
     FOREIGN KEY (club_id) REFERENCES Clubs(club_id),
     FOREIGN KEY (user_id) REFERENCES Students(user_id));""")
+mycursor.execute("""CREATE TABLE IF NOT EXISTS Club_events(
+    club_id BIGINT UNSIGNED,
+    event_id BIGINT UNSIGNED,
+    user_id BIGINT UNSIGNED,
+    PRIMARY KEY (club_id, event_id),
+    FOREIGN KEY (club_id) REFERENCES Clubs(club_id),
+    FOREIGN KEY (event_id) REFERENCES Events(event_id),
+    FOREIGN KEY (user_id) REFERENCES Students(user_id));""")
 mydb.commit()
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
@@ -159,10 +167,14 @@ def club_page(club_id):
         member_id = member_id[:-2] + ")"
         mycursor.execute("SELECT user_id, full_name, mail FROM Students WHERE user_id IN " + member_id + ";")
         members = list(mycursor)
+        mycursor.execute("SELECT role FROM Student_clubs WHERE user_id = '" + str(user_id) + "' AND club_id = '" + str(club_id) + "';")
+        role = list(mycursor)[0]
+        admin = True if role[0] == "Creator" else False
         member_of = user_id in member_ids[0]
     else:
         members = None
         member_of = False
+        admin = False
     if request.form:
         if request.form["club_join"] == "join":
             mycursor.execute("INSERT INTO Club_students (user_id, club_id) VALUES ('" + str(user_id) + "', '" + str(club_id) +"');")
@@ -175,7 +187,7 @@ def club_page(club_id):
             mydb.commit()
             flash("You have left this club.")
         return redirect(url_for("club_page", club_id = club_id))
-    return render_template("club.html", club=club[0], members=members, member_of=member_of)
+    return render_template("club.html", club=club[0], members=members, member_of=member_of, admin=admin)
 @login_required
 def student_page(member_id):
     mycursor.execute("SELECT full_name, mail FROM Students WHERE user_id = '" + str(member_id) + "';")
@@ -192,5 +204,4 @@ def student_page(member_id):
         clubs = list(mycursor)
     else:
         clubs = None
-    print(clubs)
     return render_template("student.html", member=student, clubs=clubs)
