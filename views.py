@@ -159,6 +159,12 @@ def students_page():
     return render_template("students.html", len = length, students = students)
 @login_required
 def club_page(club_id):
+    mycursor.execute("""SELECT COUNT(Club_students.club_id)
+                        FROM Club_students
+                        INNER JOIN Student_clubs
+                        ON Club_students.user_id=Student_clubs.user_id AND Club_students.club_id=Student_clubs.club_id
+                        WHERE Club_students.club_id = """ + str(club_id) + " GROUP BY Club_students.club_id;")
+    count = list(mycursor)[0][0]
     mycursor.execute("SELECT name, description FROM Clubs WHERE club_id = '" + str(club_id) + "';")
     club = list(mycursor)
     mycursor.execute("SELECT user_id FROM Club_students WHERE club_id = '" + str(club_id) + "';")
@@ -201,7 +207,7 @@ def club_page(club_id):
             kick_id = request.form["member_kick"]
             mycursor.execute("DELETE Club_students,Student_clubs FROM Club_students INNER JOIN Student_clubs ON Club_students.user_id=Student_clubs.user_id AND Club_students.club_id=Student_clubs.club_id INNER JOIN Students ON Students.user_id=Club_students.user_id WHERE Students.user_id = " + str(kick_id) + " AND Club_students.club_id = " + str(club_id) + ";")
         return redirect(url_for("club_page", club_id = club_id))
-    return render_template("club.html", club=club[0], members=members, member_of=member_of, admin=admin)
+    return render_template("club.html", club=club[0], members=members, member_of=member_of, admin=admin, count=count)
 @login_required
 def student_page(member_id):
     mycursor.execute("""SELECT COUNT(Club_students.user_id)

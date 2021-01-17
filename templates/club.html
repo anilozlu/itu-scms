@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block title %} Clubs {% endblock %}
 {% block content %}
+    <p class="subtitle">Total number of members this club has: {{count}}</p>
     <form action="" method="post">
     {% if member_of %}
         {% if admin %}
