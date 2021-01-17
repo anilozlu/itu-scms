@@ -175,7 +175,7 @@ def club_page(club_id):
             admin = role[0] == "Creator"
         except StopIteration:
             admin = False
-        member_of = user_id in member_ids[0]
+        member_of = str(user_id) in member_id
     else:
         members = None
         member_of = False
