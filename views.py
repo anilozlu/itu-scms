@@ -168,10 +168,12 @@ def club_page(club_id):
             mycursor.execute("INSERT INTO Club_students (user_id, club_id) VALUES ('" + str(user_id) + "', '" + str(club_id) +"');")
             mycursor.execute("INSERT INTO Student_clubs (user_id, club_id, role, visible) VALUES ('" + str(user_id) + "', '" + str(club_id) + "', 'Member', 1);")
             mydb.commit()
+            flash("You have joined this club.")
         elif request.form["club_join"] == "leave":
             mycursor.execute("DELETE FROM Club_students WHERE user_id = '" + str(user_id) + "';")
             mycursor.execute("DELETE FROM Student_clubs WHERE user_id = '" + str(user_id) + "';")
             mydb.commit()
+            flash("You have left this club.")
         return redirect(url_for("club_page", club_id = club_id))
     return render_template("club.html", club=club[0], members=members, member_of=member_of)
 @login_required
