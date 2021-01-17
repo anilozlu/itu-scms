@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, url_for, flash
-from flask_login import UserMixin, login_user, login_required, logout_user
+from flask_login import UserMixin, login_user, login_required, logout_user, current_user
 from passlib.hash import pbkdf2_sha256 as hasher
 import mysql.connector
 from flask_wtf import FlaskForm
@@ -31,14 +31,17 @@ mycursor.execute("""CREATE TABLE IF NOT EXISTS Events(
     description TEXT,
     name VARCHAR(100),
     PRIMARY KEY (event_id));""")
-#mycursor.execute("""CREATE TABLE IF NOT EXISTS Student_clubs(
-#    user_id SERIAL,
-#    club_id SERIAL,
-#    role VARCHAR(30),
-#    visible TINYINT,
-#    PRIMARY KEY (user_id, club_id),
-#    FOREIGN KEY (club_id) REFERENCES Clubs(club_id));""")
-
+mycursor.execute("""CREATE TABLE IF NOT EXISTS Student_clubs(
+    user_id INTEGER,
+    club_id INTEGER,
+    role VARCHAR(30),
+    visible TINYINT,
+    PRIMARY KEY (user_id, club_id));""")
+mycursor.execute("""CREATE TABLE IF NOT EXISTS Club_students(
+    club_id INTEGER,
+    user_id INTEGER,
+    PRIMARY KEY (user_id, club_id));""")
+mydb.commit()
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
 
@@ -58,10 +61,14 @@ class User(UserMixin):
         return self.active
 
 def get_user(user_id):
-    mycursor.execute("SELECT password FROM Students WHERE user_id = " + str(user_id) + ";")
-    password = list(mycursor)[0][0]
-    user = User(user_id, password) if password else None
-    return user
+    mycursor.execute("SELECT password FROM Students WHERE user_id = '" + str(user_id) + "';")
+    password = list(mycursor)
+    if password:
+        password = password[0][0]
+        user = User(user_id, password) if password else None
+        return user
+    else:
+        return None
 
 def home_page():
     return render_template("home.html")
@@ -70,6 +77,7 @@ def home_page():
 def clubs_page():
     mycursor.execute("SELECT * FROM Clubs")
     clubs = list(mycursor)
+    print(clubs)
     if clubs:
         length = len(clubs)
     else:
@@ -116,7 +124,11 @@ def create_club():
         club_name = request.form["name"]
         club_description = request.form["description"]
         mycursor.execute("INSERT INTO Clubs (name, description) VALUES (\""+club_name+"\", \""+club_description+"\");")
-        mycursor.execute("SELECT * FROM Clubs;")
+        mydb.commit()
+        user_id = current_user.username
+        mycursor.execute("SELECT club_id FROM Clubs WHERE name = '" + club_name + "';")
+        club_id = list(mycursor)[0][0]
+        mycursor.execute("INSERT INTO Student_clubs (user_id, club_id, role, visible) VALUES ('" + str(user_id) + "','" + str(club_id) + "', 'Creator', 1);")
         mydb.commit()
         return redirect(url_for("create_club"))
 @login_required
@@ -128,3 +140,8 @@ def students_page():
     else:
         length = 0
     return render_template("students.html", len = length, students = students)
+@login_required
+def club_page(club_id):
+    mycursor.execute("SELECT * FROM Clubs WHERE club_id = '" + str(club_id) + "';")
+    club = list(mycursor)
+    return render_template("club.html", club=club[0])
