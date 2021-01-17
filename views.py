@@ -176,16 +176,21 @@ def club_page(club_id):
         member_of = False
         admin = False
     if request.form:
-        if request.form["club_join"] == "join":
-            mycursor.execute("INSERT INTO Club_students (user_id, club_id) VALUES ('" + str(user_id) + "', '" + str(club_id) +"');")
-            mycursor.execute("INSERT INTO Student_clubs (user_id, club_id, role, visible) VALUES ('" + str(user_id) + "', '" + str(club_id) + "', 'Member', 1);")
-            mydb.commit()
-            flash("You have joined this club.")
-        elif request.form["club_join"] == "leave":
-            mycursor.execute("DELETE FROM Club_students WHERE user_id = '" + str(user_id) + "';")
-            mycursor.execute("DELETE FROM Student_clubs WHERE user_id = '" + str(user_id) + "';")
-            mydb.commit()
-            flash("You have left this club.")
+        if "club_join" in request.form:
+            if request.form["club_join"] == "join":
+                mycursor.execute("INSERT INTO Club_students (user_id, club_id) VALUES ('" + str(user_id) + "', '" + str(club_id) +"');")
+                mycursor.execute("INSERT INTO Student_clubs (user_id, club_id, role, visible) VALUES ('" + str(user_id) + "', '" + str(club_id) + "', 'Member', 1);")
+                mydb.commit()
+                flash("You have joined this club.")
+            elif request.form["club_join"] == "leave":
+                mycursor.execute("DELETE FROM Club_students WHERE user_id = '" + str(user_id) + "';")
+                mycursor.execute("DELETE FROM Student_clubs WHERE user_id = '" + str(user_id) + "';")
+                mydb.commit()
+                flash("You have left this club.")
+        elif "member_kick" in request.form:
+            kick_id = request.form["member_kick"]
+            mycursor.execute("DELETE FROM Club_students WHERE user_id = '" + str(kick_id) + "';")
+            mycursor.execute("DELETE FROM Student_clubs WHERE user_id = '" + str(kick_id) + "';")
         return redirect(url_for("club_page", club_id = club_id))
     return render_template("club.html", club=club[0], members=members, member_of=member_of, admin=admin)
 @login_required
