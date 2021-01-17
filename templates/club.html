@@ -36,10 +36,10 @@
                     {% for member in members %}
                     <td><a href="{{ url_for('student_page', member_id=member[0]) }}">{{member[1]}}</a></td>
                     <td>{{member[2]}}</td>
-                    {% if admin %}
+                    {% if admin and member[0] != current_user.username %}
                         <td>
                             <form action="" method="post">
-                                <button class = "button is-danger is-pulled-right" name="member_kick" value={{member[0]}}>Kick</button>
+                                <button class = "button is-danger" name="member_kick" value={{member[0]}}>Kick</button>
                             </form>
                         </td>
                     {% endif %}
