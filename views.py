@@ -162,12 +162,14 @@ def club_page(club_id):
     user_id = current_user.username
     if member_ids:
         member_id = "("
-        for member in member_ids[0]:
-            member_id += str(member) + ", "
+        for member in member_ids:
+            member_id += str(member[0]) + ", "
         member_id = member_id[:-2] + ")"
         mycursor.execute("SELECT user_id, full_name, mail FROM Students WHERE user_id IN " + member_id + ";")
         members = list(mycursor)
         mycursor.execute("SELECT role FROM Student_clubs WHERE user_id = '" + str(user_id) + "' AND club_id = '" + str(club_id) + "';")
+        for member in members:
+            print(member)
         try:
             role = mycursor.next()
             admin = role[0] == "Creator"

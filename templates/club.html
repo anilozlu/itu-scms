@@ -35,9 +35,9 @@
                 <th>Kick Member</th>
                 {% endif %}
             </tr>
-            <tr>
                 {% if members %}
                     {% for member in members %}
+                    <tr>
                     <td><a href="{{ url_for('student_page', member_id=member[0]) }}">{{member[1]}}</a></td>
                     <td>{{member[2]}}</td>
                     {% if admin and member[0] != current_user.username %}
@@ -48,7 +48,7 @@
                         </td>
                     {% endif %}
                     {% endfor %}
+                </tr>
                 {% endif %}
-            </tr>
         </table>
 {% endblock %}
