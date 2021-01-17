@@ -89,6 +89,8 @@ def home_page():
 
 @login_required
 def clubs_page():
+    mycursor.execute("SELECT COUNT(club_id) FROM Clubs;")
+    count = list(mycursor)[0][0]
     mycursor.execute("SELECT * FROM Clubs")
     clubs = list(mycursor)
     print(clubs)
@@ -96,8 +98,8 @@ def clubs_page():
         length = len(clubs)
     else:
         length = 0
-    return render_template("clubs.html", len = length, clubs = clubs)
-
+    return render_template("clubs.html", len = length, clubs = clubs, count=count)
+@login_required
 def logout_page():
     logout_user()
     flash("You have logged out.")
