@@ -204,6 +204,12 @@ def club_page(club_id):
     return render_template("club.html", club=club[0], members=members, member_of=member_of, admin=admin)
 @login_required
 def student_page(member_id):
+    mycursor.execute("""SELECT COUNT(Club_students.user_id)
+                        FROM Club_students
+                        INNER JOIN Student_clubs
+                        ON Club_students.user_id=Student_clubs.user_id AND Club_students.club_id=Student_clubs.club_id
+                        WHERE Club_students.user_id = """ + str(member_id) + " GROUP BY Club_students.user_id;")
+    count = list(mycursor)[0][0]
     mycursor.execute("SELECT full_name, mail FROM Students WHERE user_id = '" + str(member_id) + "';")
     student = list(mycursor)
     mycursor.execute("SELECT club_id FROM Student_clubs WHERE user_id = '" + str(member_id) + "';")
@@ -218,7 +224,7 @@ def student_page(member_id):
         clubs = list(mycursor)
     else:
         clubs = None
-    return render_template("student.html", member=student, clubs=clubs)
+    return render_template("student.html", member=student, clubs=clubs, count=count)
 @login_required
 def edit_club(club_id):
     mycursor.execute("SELECT role FROM Student_clubs WHERE user_id = '" + str(current_user.username) + "' AND club_id = '" + str(club_id) + "';")
