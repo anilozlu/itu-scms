@@ -32,15 +32,19 @@ mycursor.execute("""CREATE TABLE IF NOT EXISTS Events(
     name VARCHAR(100),
     PRIMARY KEY (event_id));""")
 mycursor.execute("""CREATE TABLE IF NOT EXISTS Student_clubs(
-    user_id INTEGER,
-    club_id INTEGER,
+    user_id BIGINT UNSIGNED,
+    club_id BIGINT UNSIGNED,
     role VARCHAR(30),
     visible TINYINT,
-    PRIMARY KEY (user_id, club_id));""")
+    PRIMARY KEY (user_id, club_id),
+    FOREIGN KEY (user_id) REFERENCES Students(user_id),
+    FOREIGN KEY (club_id) REFERENCES Clubs(club_id));""")
 mycursor.execute("""CREATE TABLE IF NOT EXISTS Club_students(
-    club_id INTEGER,
-    user_id INTEGER,
-    PRIMARY KEY (user_id, club_id));""")
+    club_id BIGINT UNSIGNED,
+    user_id BIGINT UNSIGNED,
+    PRIMARY KEY (user_id, club_id),
+    FOREIGN KEY (club_id) REFERENCES Clubs(club_id),
+    FOREIGN KEY (user_id) REFERENCES Students(user_id));""")
 mydb.commit()
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
