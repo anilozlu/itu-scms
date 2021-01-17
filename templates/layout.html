@@ -32,9 +32,6 @@
                     </span>
                     {% else %}
                     <span class="navbar-item navbar-off">
-                        <a class="navbar-item" href="{{ url_for('logout_page') }}">Log out</a>
-                    </span>
-                    <span class="navbar-item navbar-off">
                         <a class="navbar-item" href="{{ url_for('student_page', member_id= current_user.username) }}">Profile Page</a>
                     </span>
                     {% endif %}
@@ -47,7 +44,14 @@
                     <span class="navbar-item navbar-off">
                         <a class="navbar-item" href="{{ url_for('students_page') }}">Student List</a>
                     </span>
-                </ul>
+                </div>
+                {% if current_user.is_authenticated %}
+                <div class="navbar-menu">
+                    <span class="navbar-item navbar-end bg-red">
+                        <a class="navbar-item" href="{{ url_for('logout_page') }}">Log out</a>
+                    </span>
+                </div>
+                {% endif %}
             </nav>
         </header>
         <main>
