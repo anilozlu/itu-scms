@@ -13,7 +13,7 @@ def create_app():
     app.config.from_object("settings")
     app.add_url_rule("/", view_func=views.home_page)
     app.add_url_rule("/clubs", view_func=views.clubs_page)
-    app.add_url_rule("/clubs/<int:club_id>", view_func=views.club_page)
+    app.add_url_rule("/clubs/<int:club_id>", view_func=views.club_page, methods=["GET", "POST"])
     app.add_url_rule("/create_club", view_func=views.create_club, methods=["GET", "POST"])
     app.add_url_rule("/login", view_func=views.login_page, methods=["GET", "POST"])
     app.add_url_rule("/logout", view_func=views.logout_page)

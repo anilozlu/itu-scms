@@ -151,23 +151,42 @@ def club_page(club_id):
     club = list(mycursor)
     mycursor.execute("SELECT user_id FROM Club_students WHERE club_id = '" + str(club_id) + "';")
     member_ids = list(mycursor)
-    member_id = "("
-    for member in member_ids[0]:
-        member_id += str(member) + ", "
-    member_id = member_id[:-2] + ")"
-    mycursor.execute("SELECT user_id, full_name, mail FROM Students WHERE user_id IN " + member_id + ";")
-    members = list(mycursor)[0]
-    return render_template("club.html", club=club[0], members=members)
+    user_id = current_user.username
+    if member_ids:
+        member_id = "("
+        for member in member_ids[0]:
+            member_id += str(member) + ", "
+        member_id = member_id[:-2] + ")"
+        mycursor.execute("SELECT user_id, full_name, mail FROM Students WHERE user_id IN " + member_id + ";")
+        members = list(mycursor)
+        member_of = user_id in member_ids[0]
+    else:
+        members = None
+        member_of = False
+    if request.form:
+        if request.form["club_join"] == "join":
+            mycursor.execute("INSERT INTO Club_students (user_id, club_id) VALUES ('" + str(user_id) + "', '" + str(club_id) +"');")
+            mycursor.execute("INSERT INTO Student_clubs (user_id, club_id, role, visible) VALUES ('" + str(user_id) + "', '" + str(club_id) + "', 'Member', 1);")
+            mydb.commit()
+        elif request.form["club_join"] == "leave":
+            mycursor.execute("DELETE FROM Club_students WHERE user_id = '" + str(user_id) + "';")
+            mycursor.execute("DELETE FROM Student_clubs WHERE user_id = '" + str(user_id) + "';")
+            mydb.commit()
+        return redirect(url_for("club_page", club_id = club_id))
+    return render_template("club.html", club=club[0], members=members, member_of=member_of)
 @login_required
 def student_page(member_id):
     mycursor.execute("SELECT full_name, mail FROM Students WHERE user_id = '" + str(member_id) + "';")
     student = list(mycursor)
     mycursor.execute("SELECT club_id FROM Student_clubs WHERE user_id = '" + str(member_id) + "';")
     club_ids = list(mycursor)
-    club_id = "("
-    for club in club_ids[0]:
-        club_id += str(club) + ", "
-    club_id = club_id[:-2] + ")"
-    mycursor.execute("SELECT club_id, name FROM Clubs WHERE club_id IN " + club_id + ";")
-    clubs = list(mycursor)[0]
+    if club_ids:
+        club_id = "("
+        for club in club_ids[0]:
+            club_id += str(club) + ", "
+        club_id = club_id[:-2] + ")"
+        mycursor.execute("SELECT club_id, name FROM Clubs WHERE club_id IN " + club_id + ";")
+        clubs = list(mycursor)[0]
+    else:
+        clubs = None
     return render_template("student.html", member=student, clubs=clubs)

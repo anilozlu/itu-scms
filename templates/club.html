@@ -1,6 +1,15 @@
 {% extends "layout.html" %}
 {% block title %} Clubs {% endblock %}
 {% block content %}
+    {% if member_of %}
+    <form action="" method="post">
+        <button class = "button is-primary" name="club_join" value="leave">Leave</button>
+    </form>
+    {% else %}
+    <form action="" method="post">
+        <button class = "button is-primary" name="club_join" value="join">Join</button>
+    </form>
+    {% endif %}
         <table class="table">
             <tr>
                 <th>Club Name</th>
@@ -16,9 +25,12 @@
                 <th>Member E-mails</th>
             </tr>
             <tr>
-                {% for element in members[1:] %}
-                <td><a href="{{ url_for('student_page', member_id=members[0]) }}">{{element}}</a></td>
-                {% endfor %}
+                {% if members %}
+                    {% for member in members %}
+                    <td><a href="{{ url_for('student_page', member_id=member[0]) }}">{{member[1]}}</a></td>
+                    <td>{{member[2]}}</td>
+                    {% endfor %}
+                {% endif %}
             </tr>
         </table>
 {% endblock %}

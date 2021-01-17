@@ -17,9 +17,11 @@
                 <th>Club Names</th>
             </tr>
             <tr>
-                {% for element in clubs[1:] %}
-                <td><a href="{{ url_for('club_page', club_id=clubs[0]) }}">{{element}}</a></td>
-                {% endfor %}
+                {% if clubs %}
+                    {% for element in clubs[1:] %}
+                    <td><a href="{{ url_for('club_page', club_id=clubs[0]) }}">{{element}}</a></td>
+                    {% endfor %}
+                {% endif %}
             </tr>
         </table>
 {% endblock %}
