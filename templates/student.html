@@ -16,12 +16,14 @@
             <tr>
                 <th>Club Names</th>
             </tr>
-            <tr>
-                {% if clubs %}
-                    {% for element in clubs[1:] %}
-                    <td><a href="{{ url_for('club_page', club_id=clubs[0]) }}">{{element}}</a></td>
+            {% if clubs %}
+                {% for club in clubs %}
+                    {% for element in club[1:] %}
+                    <tr>
+                    <td><a href="{{ url_for('club_page', club_id=club[0]) }}">{{element}}</a></td>
+                    </tr>
                     {% endfor %}
-                {% endif %}
-            </tr>
+                {% endfor %}
+            {% endif %}
         </table>
 {% endblock %}

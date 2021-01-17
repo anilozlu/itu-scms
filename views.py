@@ -184,11 +184,13 @@ def student_page(member_id):
     club_ids = list(mycursor)
     if club_ids:
         club_id = "("
-        for club in club_ids[0]:
-            club_id += str(club) + ", "
+        for club in club_ids:
+            for c_id in club:
+                club_id += str(c_id) + ", "
         club_id = club_id[:-2] + ")"
         mycursor.execute("SELECT club_id, name FROM Clubs WHERE club_id IN " + club_id + ";")
-        clubs = list(mycursor)[0]
+        clubs = list(mycursor)
     else:
         clubs = None
+    print(clubs)
     return render_template("student.html", member=student, clubs=clubs)
