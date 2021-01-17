@@ -83,7 +83,9 @@ def get_user(user_id):
         return None
 
 def home_page():
-    return render_template("home.html")
+    mycursor.execute("SELECT COUNT(user_id) FROM Students;")
+    count = list(mycursor)[0][0]
+    return render_template("home.html", count=count)
 
 @login_required
 def clubs_page():
@@ -233,3 +235,12 @@ def edit_club(club_id):
         mydb.commit()
         flash("You have successfully editted your club's information.")
         return redirect(url_for("club_page", club_id = club_id))
+@login_required
+def create_event(club_id):
+    mycursor.execute("SELECT role FROM Student_clubs WHERE user_id = '" + str(current_user.username) + "' AND club_id = '" + str(club_id) + "';")
+    role = list(mycursor)[0]
+    admin = role[0] == "Creator"
+    if not admin:
+        abort(401)
+    mycursor.execute("SELECT * FROM Clubs WHERE club_id = '" + str(club_id) + "';")
+    club=list(mycursor)[0]
