@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, abort
 from flask_login import UserMixin, login_user, login_required, logout_user, current_user
 from passlib.hash import pbkdf2_sha256 as hasher
 import mysql.connector
@@ -169,7 +169,7 @@ def club_page(club_id):
         members = list(mycursor)
         mycursor.execute("SELECT role FROM Student_clubs WHERE user_id = '" + str(user_id) + "' AND club_id = '" + str(club_id) + "';")
         role = list(mycursor)[0]
-        admin = True if role[0] == "Creator" else False
+        admin = role[0] == "Creator"
         member_of = user_id in member_ids[0]
     else:
         members = None
@@ -177,7 +177,9 @@ def club_page(club_id):
         admin = False
     if request.form:
         if "club_join" in request.form:
-            if request.form["club_join"] == "join":
+            if request.form["club_join"] == "edit":
+                return redirect(url_for("edit_club", club_id = club_id))
+            elif request.form["club_join"] == "join":
                 mycursor.execute("INSERT INTO Club_students (user_id, club_id) VALUES ('" + str(user_id) + "', '" + str(club_id) +"');")
                 mycursor.execute("INSERT INTO Student_clubs (user_id, club_id, role, visible) VALUES ('" + str(user_id) + "', '" + str(club_id) + "', 'Member', 1);")
                 mydb.commit()
@@ -210,3 +212,21 @@ def student_page(member_id):
     else:
         clubs = None
     return render_template("student.html", member=student, clubs=clubs)
+@login_required
+def edit_club(club_id):
+    mycursor.execute("SELECT role FROM Student_clubs WHERE user_id = '" + str(current_user.username) + "' AND club_id = '" + str(club_id) + "';")
+    role = list(mycursor)[0]
+    admin = role[0] == "Creator"
+    if not admin:
+        abort(401)
+    mycursor.execute("SELECT * FROM Clubs WHERE club_id = '" + str(club_id) + "';")
+    club=list(mycursor)[0]
+    if request.method == "GET":
+        return render_template("edit_club.html", club=club)
+    else:
+        club_name = request.form["name"]
+        club_description = request.form["description"]
+        mycursor.execute("UPDATE Clubs SET name = '" + club_name + "', description = '" + club_description + "' WHERE club_id = '" + str(club_id) + "';")
+        mydb.commit()
+        flash("You have successfully editted your club's information.")
+        return redirect(url_for("club_page", club_id = club_id))

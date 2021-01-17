@@ -20,6 +20,7 @@ def create_app():
     app.add_url_rule("/register", view_func=views.register_page, methods=["GET", "POST"])
     app.add_url_rule("/students", view_func=views.students_page)
     app.add_url_rule("/students/<int:member_id>", view_func=views.student_page)
+    app.add_url_rule("/clubs/edit/<int:club_id>", view_func=views.edit_club, methods=["GET", "POST"])
 
     lm.init_app(app)
     lm.login_view = "login_page"

@@ -3,7 +3,11 @@
 {% block content %}
     <form action="" method="post">
     {% if member_of %}
-        <button class = "button is-primary is-pulled-right" name="club_join" value="leave">Leave</button>
+        {% if admin %}
+            <button class = "button is-primary is-pulled-right" name="club_join" value="edit">Edit</button>
+        {% else %}
+            <button class = "button is-primary is-pulled-right" name="club_join" value="leave">Leave</button>
+        {% endif %}
     {% else %}
         <button class = "button is-primary is-pulled-right" name="club_join" value="join">Join</button>
     {% endif %}
