@@ -147,7 +147,7 @@ def students_page():
     return render_template("students.html", len = length, students = students)
 @login_required
 def club_page(club_id):
-    mycursor.execute("SELECT * FROM Clubs WHERE club_id = '" + str(club_id) + "';")
+    mycursor.execute("SELECT name, description FROM Clubs WHERE club_id = '" + str(club_id) + "';")
     club = list(mycursor)
     mycursor.execute("SELECT user_id FROM Club_students WHERE club_id = '" + str(club_id) + "';")
     member_ids = list(mycursor)
@@ -155,8 +155,19 @@ def club_page(club_id):
     for member in member_ids[0]:
         member_id += str(member) + ", "
     member_id = member_id[:-2] + ")"
-    print("SELECT * FROM Students WHERE user_id IN " + member_id + ";")
-    mycursor.execute("SELECT full_name, mail FROM Students WHERE user_id IN " + member_id + ";")
+    mycursor.execute("SELECT user_id, full_name, mail FROM Students WHERE user_id IN " + member_id + ";")
     members = list(mycursor)[0]
-    print(members)
     return render_template("club.html", club=club[0], members=members)
+@login_required
+def student_page(member_id):
+    mycursor.execute("SELECT full_name, mail FROM Students WHERE user_id = '" + str(member_id) + "';")
+    student = list(mycursor)
+    mycursor.execute("SELECT club_id FROM Student_clubs WHERE user_id = '" + str(member_id) + "';")
+    club_ids = list(mycursor)
+    club_id = "("
+    for club in club_ids[0]:
+        club_id += str(club) + ", "
+    club_id = club_id[:-2] + ")"
+    mycursor.execute("SELECT club_id, name FROM Clubs WHERE club_id IN " + club_id + ";")
+    clubs = list(mycursor)[0]
+    return render_template("student.html", member=student, clubs=clubs)
