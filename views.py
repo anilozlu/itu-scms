@@ -168,8 +168,11 @@ def club_page(club_id):
         mycursor.execute("SELECT user_id, full_name, mail FROM Students WHERE user_id IN " + member_id + ";")
         members = list(mycursor)
         mycursor.execute("SELECT role FROM Student_clubs WHERE user_id = '" + str(user_id) + "' AND club_id = '" + str(club_id) + "';")
-        role = list(mycursor)[0]
-        admin = role[0] == "Creator"
+        try:
+            role = mycursor.next()
+            admin = role[0] == "Creator"
+        except StopIteration:
+            admin = False
         member_of = user_id in member_ids[0]
     else:
         members = None
