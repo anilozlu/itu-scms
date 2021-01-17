@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, url_for, flash
-from flask_login import UserMixin, login_user
+from flask_login import UserMixin, login_user, login_required, logout_user
 from passlib.hash import pbkdf2_sha256 as hasher
 import mysql.connector
 from flask_wtf import FlaskForm
@@ -66,6 +66,7 @@ def get_user(user_id):
 def home_page():
     return render_template("home.html")
 
+@login_required
 def clubs_page():
     mycursor.execute("SELECT * FROM Clubs")
     clubs = list(mycursor)
@@ -74,6 +75,11 @@ def clubs_page():
     else:
         length = 0
     return render_template("clubs.html", len = length, clubs = clubs)
+
+def logout_page():
+    logout_user()
+    flash("You have logged out.")
+    return redirect(url_for("home_page"))
 
 def login_page():
     form = LoginForm()
