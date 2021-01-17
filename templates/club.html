@@ -1,15 +1,13 @@
 {% extends "layout.html" %}
 {% block title %} Clubs {% endblock %}
 {% block content %}
+    <form action="" method="post">
     {% if member_of %}
-    <form action="" method="post">
-        <button class = "button is-primary" name="club_join" value="leave">Leave</button>
-    </form>
+        <button class = "button is-primary is-pulled-right" name="club_join" value="leave">Leave</button>
     {% else %}
-    <form action="" method="post">
-        <button class = "button is-primary" name="club_join" value="join">Join</button>
-    </form>
+        <button class = "button is-primary is-pulled-right" name="club_join" value="join">Join</button>
     {% endif %}
+    </form>
         <table class="table">
             <tr>
                 <th>Club Name</th>
