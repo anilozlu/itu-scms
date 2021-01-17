@@ -13,12 +13,18 @@
                     <span class="navbar-item bg-cyan">
                         <a class="navbar-item" href="{{ url_for('home_page') }}">Home Page</a>
                     </span>
+                    {% if not current_user.is_authenticated %}
                     <span class="navbar-item navbar-off">
                         <a class="navbar-item" href="{{ url_for('register_page') }}">Register</a>
                     </span>
                     <span class="navbar-item navbar-off">
                         <a class="navbar-item" href="{{ url_for('login_page') }}">Log in</a>
                     </span>
+                    {% else %}
+                    <span class="navbar-item navbar-off">
+                        <a class="navbar-item" href="{{ url_for('login_page') }}">Log out</a>
+                    </span>
+                    {% endif %}
                     <span class="navbar-item navbar-off">
                         <a class="navbar-item" href="{{ url_for('clubs_page') }}">Club List</a>
                     </span>

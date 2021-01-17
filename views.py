@@ -1,6 +1,11 @@
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, flash
+from flask_login import UserMixin, login_user
 from passlib.hash import pbkdf2_sha256 as hasher
 import mysql.connector
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField
+from wtforms.validators import DataRequired
+
 mydb = mysql.connector.connect(
     host="localhost",
     user="anil",
@@ -33,6 +38,31 @@ mycursor.execute("""CREATE TABLE IF NOT EXISTS Events(
 #    visible TINYINT,
 #    PRIMARY KEY (user_id, club_id),
 #    FOREIGN KEY (club_id) REFERENCES Clubs(club_id));""")
+
+class LoginForm(FlaskForm):
+    username = StringField("Username", validators=[DataRequired()])
+
+    password = PasswordField("Password", validators=[DataRequired()])
+
+class User(UserMixin):
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+        self.active = True
+    
+    def get_id(self):
+        return self.username
+
+    @property
+    def is_active(self):
+        return self.active
+
+def get_user(user_id):
+    mycursor.execute("SELECT password FROM Students WHERE user_id = " + str(user_id) + ";")
+    password = list(mycursor)[0][0]
+    user = User(user_id, password) if password else None
+    return user
+
 def home_page():
     return render_template("home.html")
 
@@ -46,7 +76,21 @@ def clubs_page():
     return render_template("clubs.html", len = length, clubs = clubs)
 
 def login_page():
-    return render_template("login.html")
+    form = LoginForm()
+    if form.validate_on_submit():
+        username = form.data["username"]
+        mycursor.execute("SELECT user_id FROM Students WHERE mail = '" + username + "';")
+        user_id = list(mycursor)[0][0]
+        user = get_user(user_id)
+        if user is not None:
+            password = form.data["password"]
+            if hasher.verify(password, user.password):
+                login_user(user)
+                flash("You have logged in.")
+                next_page = request.args.get("next", url_for("home_page"))
+                return redirect(next_page)
+        flash("Invalid credentials.")
+    return render_template("login.html", form=form)
 
 def register_page():
     if request.method == "GET":
