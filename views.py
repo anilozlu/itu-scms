@@ -129,6 +129,7 @@ def create_club():
         mycursor.execute("SELECT club_id FROM Clubs WHERE name = '" + club_name + "';")
         club_id = list(mycursor)[0][0]
         mycursor.execute("INSERT INTO Student_clubs (user_id, club_id, role, visible) VALUES ('" + str(user_id) + "','" + str(club_id) + "', 'Creator', 1);")
+        mycursor.execute("INSERT INTO Club_students (club_id, user_id) VALUES ('" + str(club_id) + "', '" + str(user_id) +"');")
         mydb.commit()
         return redirect(url_for("create_club"))
 @login_required
@@ -144,4 +145,14 @@ def students_page():
 def club_page(club_id):
     mycursor.execute("SELECT * FROM Clubs WHERE club_id = '" + str(club_id) + "';")
     club = list(mycursor)
-    return render_template("club.html", club=club[0])
+    mycursor.execute("SELECT user_id FROM Club_students WHERE club_id = '" + str(club_id) + "';")
+    member_ids = list(mycursor)
+    member_id = "("
+    for member in member_ids[0]:
+        member_id += str(member) + ", "
+    member_id = member_id[:-2] + ")"
+    print("SELECT * FROM Students WHERE user_id IN " + member_id + ";")
+    mycursor.execute("SELECT full_name, mail FROM Students WHERE user_id IN " + member_id + ";")
+    members = list(mycursor)[0]
+    print(members)
+    return render_template("club.html", club=club[0], members=members)

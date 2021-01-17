@@ -11,5 +11,14 @@
                 <td>{{element}}</td>
                 {% endfor %}
             </tr>
+            <tr>
+                <th>Member Names</th>
+                <th>Member E-mails</th>
+            </tr>
+            <tr>
+                {% for element in members %}
+                <td>{{element}}</td>
+                {% endfor %}
+            </tr>
         </table>
 {% endblock %}
