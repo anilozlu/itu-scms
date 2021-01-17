@@ -108,7 +108,7 @@ def register_page():
         mycursor.execute("INSERT INTO Students (mail, full_name, password) VALUES (\""+ user_mail + "\", \""+ user_name +"\", \""+ user_password +"\");")
         mydb.commit()
         return redirect(url_for("home_page"))
-
+@login_required
 def create_club():
     if request.method == "GET":
         return render_template("create_club.html")
@@ -119,7 +119,7 @@ def create_club():
         mycursor.execute("SELECT * FROM Clubs;")
         mydb.commit()
         return redirect(url_for("create_club"))
-
+@login_required
 def students_page():
     mycursor.execute("SELECT * FROM Students")
     students = list(mycursor)
