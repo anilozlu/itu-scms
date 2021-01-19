@@ -93,7 +93,6 @@ def clubs_page():
     count = list(mycursor)[0][0]
     mycursor.execute("SELECT * FROM Clubs")
     clubs = list(mycursor)
-    print(clubs)
     if clubs:
         length = len(clubs)
     else:
@@ -178,8 +177,6 @@ def club_page(club_id):
         mycursor.execute("SELECT user_id, full_name, mail FROM Students WHERE user_id IN " + member_id + ";")
         members = list(mycursor)
         mycursor.execute("SELECT role FROM Student_clubs WHERE user_id = '" + str(user_id) + "' AND club_id = '" + str(club_id) + "';")
-        for member in members:
-            print(member)
         try:
             role = mycursor.next()
             admin = role[0] == "Creator"
@@ -190,6 +187,12 @@ def club_page(club_id):
         members = None
         member_of = False
         admin = False
+    mycursor.execute("SELECT * FROM Events INNER JOIN Club_events ON Events.event_id=Club_events.event_id WHERE Club_events.club_id={};".format(club_id))
+    events = list(mycursor)
+    if events:
+        events = events
+    else:
+        events = None
     if request.form:
         if "club_join" in request.form:
             if request.form["club_join"] == "edit":
@@ -206,8 +209,10 @@ def club_page(club_id):
         elif "member_kick" in request.form:
             kick_id = request.form["member_kick"]
             mycursor.execute("DELETE Club_students,Student_clubs FROM Club_students INNER JOIN Student_clubs ON Club_students.user_id=Student_clubs.user_id AND Club_students.club_id=Student_clubs.club_id INNER JOIN Students ON Students.user_id=Club_students.user_id WHERE Students.user_id = " + str(kick_id) + " AND Club_students.club_id = " + str(club_id) + ";")
+        elif "create_event" in request.form:
+            return redirect(url_for("create_event", club_id=club_id))
         return redirect(url_for("club_page", club_id = club_id))
-    return render_template("club.html", club=club[0], members=members, member_of=member_of, admin=admin, count=count)
+    return render_template("club.html", club=club[0], members=members, member_of=member_of, admin=admin, count=count, events=events)
 @login_required
 def student_page(member_id):
     mycursor.execute("""SELECT COUNT(Club_students.user_id)
@@ -258,3 +263,14 @@ def create_event(club_id):
         abort(401)
     mycursor.execute("SELECT * FROM Clubs WHERE club_id = '" + str(club_id) + "';")
     club=list(mycursor)[0]
+    if request.method == "GET":
+        return render_template("create_event.html", club=club)
+    else:
+        event_name = request.form["name"]
+        event_description = request.form["description"]
+        mycursor.execute("INSERT INTO Events (name, description) VALUES ('" + event_name + "', '" + event_description +"');")
+        mycursor.execute("SELECT LAST_INSERT_ID()")
+        event_id = mycursor.next()[0]
+        mycursor.execute("INSERT INTO Club_events (club_id, event_id) VALUES ('{}', '{}');".format(club_id, event_id))
+        mydb.commit()
+        return render_template("create_event.html", club=club)

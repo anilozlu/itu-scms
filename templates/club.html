@@ -50,6 +50,27 @@
                     {% endif %}
                     {% endfor %}
                 </tr>
+                <tr>
+                    <th>Event Name</th>
+                    <th>Event Description</th>
+                    {% if admin %}
+                    <th></th>
+                    {% endif %}
+                </tr>
+                {% endif %}
+                {% if events %}
+                    {% for event in events %}
+                    <tr>
+                        <td><a href="">{{event[2]}}</a></td>
+                        <td>{{event[1]}}</td>
+                        {% if admin %}
+                            <td></td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
                 {% endif %}
         </table>
+        <form action="" method="post">
+            <button class = "button is-primary is-pulled-right is-large" name="create_event" value={{club[0]}}>Create Event</button>
+        </form>
 {% endblock %}
