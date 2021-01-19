@@ -278,4 +278,4 @@ def create_event(club_id):
         event_id = mycursor.next()[0]
         mycursor.execute("INSERT INTO Club_events (club_id, event_id) VALUES ('{}', '{}');".format(club_id, event_id))
         mydb.commit()
-        return redirect(url_for("club_page"), club_id=club[0])
+        return redirect(url_for("club_page", club_id=club[0]))

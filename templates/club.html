@@ -70,7 +70,9 @@
                     {% endfor %}
                 {% endif %}
         </table>
+        {% if admin %}
         <form action="" method="post">
             <button class = "button is-primary is-pulled-right is-large" name="create_event" value={{club[0]}}>Create Event</button>
         </form>
+        {% endif %}
 {% endblock %}
