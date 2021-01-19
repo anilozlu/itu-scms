@@ -37,22 +37,22 @@ mycursor.execute("""CREATE TABLE IF NOT EXISTS Student_clubs(
     role VARCHAR(30),
     visible TINYINT,
     PRIMARY KEY (user_id, club_id),
-    FOREIGN KEY (user_id) REFERENCES Students(user_id),
-    FOREIGN KEY (club_id) REFERENCES Clubs(club_id));""")
+    FOREIGN KEY (user_id) REFERENCES Students(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (club_id) REFERENCES Clubs(club_id) ON DELETE CASCADE);""")
 mycursor.execute("""CREATE TABLE IF NOT EXISTS Club_students(
     club_id BIGINT UNSIGNED,
     user_id BIGINT UNSIGNED,
     PRIMARY KEY (user_id, club_id),
-    FOREIGN KEY (club_id) REFERENCES Clubs(club_id),
-    FOREIGN KEY (user_id) REFERENCES Students(user_id));""")
+    FOREIGN KEY (club_id) REFERENCES Clubs(club_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES Students(user_id) ON DELETE CASCADE);""")
 mycursor.execute("""CREATE TABLE IF NOT EXISTS Club_events(
     club_id BIGINT UNSIGNED,
     event_id BIGINT UNSIGNED,
     user_id BIGINT UNSIGNED,
     PRIMARY KEY (club_id, event_id),
     FOREIGN KEY (club_id) REFERENCES Clubs(club_id),
-    FOREIGN KEY (event_id) REFERENCES Events(event_id),
-    FOREIGN KEY (user_id) REFERENCES Students(user_id));""")
+    FOREIGN KEY (event_id) REFERENCES Events(event_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES Students(user_id) ON DELETE CASCADE);""")
 mydb.commit()
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
@@ -278,4 +278,10 @@ def create_event(club_id):
         event_id = mycursor.next()[0]
         mycursor.execute("INSERT INTO Club_events (club_id, event_id) VALUES ('{}', '{}');".format(club_id, event_id))
         mydb.commit()
-        return redirect(url_for("club_page"), club_id=club[0])
+        return redirect(url_for("club_page", club_id=club[0]))
+@login_required
+def delete_event(event_id):
+    mycursor.execute("SELECT club_id FROM Club_events INNER JOIN Events ON Club_events.event_id=Events.event_id WHERE Club_events.event_id = {}".format(event_id))
+    club_id = list(mycursor)[0][0]
+    mycursor.execute("DELETE Club_events, Events from Club_events INNER JOIN Events ON Club_events.event_id=Events.event_id WHERE Events.event_id = {}".format(event_id))
+    return redirect(url_for("club_page", club_id=club_id))
