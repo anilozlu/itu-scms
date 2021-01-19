@@ -109,7 +109,11 @@ def login_page():
     if form.validate_on_submit():
         username = form.data["username"]
         mycursor.execute("SELECT user_id FROM Students WHERE mail = '" + username + "';")
-        user_id = list(mycursor)[0][0]
+        user_id = list(mycursor)
+        if not user_id:
+            flash("You have entered wrong email or password.")
+            return redirect(url_for("login_page"))
+        user_id = user_id[0][0]
         user = get_user(user_id)
         if user is not None:
             password = form.data["password"]
@@ -118,7 +122,7 @@ def login_page():
                 flash("You have logged in.")
                 next_page = request.args.get("next", url_for("home_page"))
                 return redirect(next_page)
-        flash("Invalid credentials.")
+        flash("You have entered wrong email or password.")
     return render_template("login.html", form=form)
 
 def register_page():
@@ -220,7 +224,8 @@ def student_page(member_id):
                         INNER JOIN Student_clubs
                         ON Club_students.user_id=Student_clubs.user_id AND Club_students.club_id=Student_clubs.club_id
                         WHERE Club_students.user_id = """ + str(member_id) + " GROUP BY Club_students.user_id;")
-    count = list(mycursor)[0][0]
+    count = list(mycursor)
+    count = count[0][0] if count else 0
     mycursor.execute("SELECT full_name, mail FROM Students WHERE user_id = '" + str(member_id) + "';")
     student = list(mycursor)
     mycursor.execute("SELECT club_id FROM Student_clubs WHERE user_id = '" + str(member_id) + "';")
@@ -273,4 +278,4 @@ def create_event(club_id):
         event_id = mycursor.next()[0]
         mycursor.execute("INSERT INTO Club_events (club_id, event_id) VALUES ('{}', '{}');".format(club_id, event_id))
         mydb.commit()
-        return render_template("create_event.html", club=club)
+        return redirect(url_for("club_page"), club_id=club[0])
