@@ -21,8 +21,10 @@ def create_app():
     app.add_url_rule("/students", view_func=views.students_page)
     app.add_url_rule("/students/<int:member_id>", view_func=views.student_page)
     app.add_url_rule("/clubs/edit/<int:club_id>", view_func=views.edit_club, methods=["GET", "POST"])
-    app.add_url_rule("/clubs/events/edit/<int:club_id>", view_func=views.create_event, methods=["GET","POST"])
+    app.add_url_rule("/clubs/events/create/<int:club_id>", view_func=views.create_event, methods=["GET","POST"])
     app.add_url_rule("/clubs/events/delete/<int:event_id>", view_func=views.delete_event, methods=["GET","POST"])
+    app.add_url_rule("/clubs/events/view/<int:event_id>", view_func=views.event_page, methods=["GET","POST"])
+    app.add_url_rule("/clubs/events/edit/<int:event_id>", view_func=views.edit_event, methods=["GET","POST"])
 
     lm.init_app(app)
     lm.login_view = "login_page"

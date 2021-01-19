@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block title %} Event {% endblock %}
+{% block content %}
+    {% if admin %}
+    <form action="" method="post">
+        <button class = "button is-primary is-pulled-right" name="edit_event" value="edit">Edit</button>
+    </form>
+    {% endif %}
+    {% if admin %}
+    <form action="{{url_for('club_page', club_id=club_id)}}" method="post">
+        <button class = "button is-primary" name="back" value="back">Back to club</button>
+    </form>
+    {% endif %}
+        <table class="table">
+            <tr>
+                <th>Event Name</th>
+                <th>Event Description</th>
+            </tr>
+            <tr>
+                {% for element in event[:0:-1] %}
+                <td>{{element}}</td>
+                {% endfor %}
+            </tr>
+        </table>
+    {% if admin %}
+    <form action="" method="post">
+        <button class = "button is-danger is-pulled-right" name="delete_event" value="delete">Delete</button>
+    </form>
+    {% endif %}
+{% endblock %}

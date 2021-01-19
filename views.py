@@ -284,4 +284,42 @@ def delete_event(event_id):
     mycursor.execute("SELECT club_id FROM Club_events INNER JOIN Events ON Club_events.event_id=Events.event_id WHERE Club_events.event_id = {}".format(event_id))
     club_id = list(mycursor)[0][0]
     mycursor.execute("DELETE Club_events, Events from Club_events INNER JOIN Events ON Club_events.event_id=Events.event_id WHERE Events.event_id = {}".format(event_id))
+    mydb.commit()
     return redirect(url_for("club_page", club_id=club_id))
+@login_required
+def event_page(event_id):
+    mycursor.execute("SELECT club_id FROM Club_events INNER JOIN Events ON Club_events.event_id=Events.event_id WHERE Club_events.event_id = {}".format(event_id))
+    club_id = list(mycursor)[0][0]
+    mycursor.execute("SELECT role FROM Student_clubs WHERE user_id = '" + str(current_user.username) + "' AND club_id = '" + str(club_id) + "';")
+    role = list(mycursor)[0]
+    admin = role[0] == "Creator"
+    if request.method == "GET":
+        mycursor.execute("SELECT * FROM Events WHERE event_id = {}".format(event_id))
+        event = list(mycursor)[0]
+        return render_template("event.html", event=event, club_id=club_id, admin=admin)
+    else:
+        if "edit_event" in request.form:
+            return redirect(url_for("edit_event", event_id=event_id))
+        elif "view_event" in request.form:
+            mycursor.execute("SELECT * FROM Events WHERE event_id = {}".format(event_id))
+            event = list(mycursor)[0]
+            return render_template("event.html", event=event, club_id=club_id, admin=admin)
+        elif "delete_event" in request.form:
+            mycursor.execute("DELETE FROM Events WHERE event_id = {}".format(event_id))
+            mydb.commit()
+            flash("Event deleted.")
+            return redirect(url_for("club_page", club_id=club_id))
+@login_required
+def edit_event(event_id):
+    if request.method == "GET":
+        mycursor.execute("SELECT * FROM Events WHERE event_id = {}".format(event_id))
+        event = list(mycursor)[0]
+        mycursor.execute("SELECT club_id FROM Club_events INNER JOIN Events ON Club_events.event_id=Events.event_id WHERE Club_events.event_id = {}".format(event_id))
+        club_id = list(mycursor)[0][0]
+        return render_template("edit_event.html", event=event, club_id=club_id)
+    else:
+        name = request.form["name"]
+        description = request.form["description"]
+        mycursor.execute("UPDATE Events SET name = '{}', description = '{}' WHERE event_id={};".format(name, description, event_id))
+        mydb.commit()
+        return redirect(url_for("event_page", event_id = event_id))

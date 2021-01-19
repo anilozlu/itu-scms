@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block title %} Edit Event {% endblock %}
+{% block content %}
+        <h1 class="title">Here, you can edit an event's name and description!</h1>
+        <form action="" method="post" name="event_edit">
+            <div class="field">
+                <label for="name" class="label">Event Name</label>
+                <div class="control">
+                    <input type="text" name="name" class="input" required="required" value="{{event[1]}}" placeholder="Put your event's name here."/>
+                </div>
+            </div>
+            <div class="field">
+                <label for="description" class="label">Description</label>
+                <div class="control">
+                    <textarea class="textarea" name="description" placeholder="Describe what your event is about! (optional)">{{event[2]}}</textarea>
+                </div>
+            </div>
+            <div class="field is-grouped">
+                <div class="control">
+                    <button class="button is-primary">Edit</button>
+                </div>
+            </div>
+        </form>
+{% endblock %}
