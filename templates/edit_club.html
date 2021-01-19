@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block title %} Club Creation {% endblock %}
+{% block content %}
+        <h1 class="title">Here, you can edit your club's name and description!</h1>
+        <form action="" method="post" name="club_edit">
+            <div class="field">
+                <label for="name" class="label">Club Name</label>
+                <div class="control">
+                    <input type="text" name="name" class="input" required="required" value="{{club[1]}}" placeholder="Put your club's name here."/>
+                </div>
+            </div>
+            <div class="field">
+                <label for="description" class="label">Description</label>
+                <div class="control">
+                    <textarea class="textarea" name="description" placeholder="Describe what your club is about! (optional)">{{club[2]}}</textarea>
+                </div>
+            </div>
+            <div class="field is-grouped">
+                <div class="control">
+                    <button class="button is-primary">Edit</button>
+                </div>
+            </div>
+        </form>
+{% endblock %}

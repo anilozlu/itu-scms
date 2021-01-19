@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block title %} Students {% endblock %}
+{% block content %}
+        <table class="table">
+            <tr>
+                <th>Student Name</th>
+                <th>Student E-mail</th>
+            </tr>
+            {% if (len>0) %}
+            {% for i in range(0, len) %}
+            <tr>
+                <td><a href="{{ url_for('student_page', member_id=students[i][0]) }}">{{students[i][3]}}</a></td>
+                <td>{{students[i][1]}}</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </table>
+{% endblock %}

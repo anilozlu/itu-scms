@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block title %} Clubs {% endblock %}
+{% block content %}
+    <p class="subtitle">Total number of created clubs: {{count}}</p>
+        <table class="table">
+            <tr>
+                <th>Club Name</th>
+                <th>Club Description</th>
+            </tr>
+            {% if (len>0) %}
+            {% for i in range(0, len) %}
+            <tr>
+                <td><a href="{{ url_for('club_page', club_id=clubs[i][0]) }}">{{clubs[i][1]}}</a></td>
+                <td>{{clubs[i][2]|truncate(400)}}</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </table>
+{% endblock %}

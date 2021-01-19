@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <title>ITU SCMS - {% block title %}{% endblock %}</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='bulma.css') }}"/>
+        <link rel="stylesheet" href="{{ url_for('static', filename='scms.css') }}"/>
+        <script>document.addEventListener('DOMContentLoaded', () => {
+            (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+              var $notification = $delete.parentNode;
+          
+              $delete.addEventListener('click', () => {
+                $notification.parentNode.removeChild($notification);
+              });
+            });
+          });
+        </script>
+    </head>
+    <body>
+        <header>
+            <nav class="navbar bg-blue" aria_label="main navigation">
+                <div class="navbar-brand">
+                    <span class="navbar-item bg-cyan">
+                        <a class="navbar-item" href="{{ url_for('home_page') }}">Home Page</a>
+                    </span>
+                    {% if not current_user.is_authenticated %}
+                    <span class="navbar-item navbar-off">
+                        <a class="navbar-item" href="{{ url_for('register_page') }}">Register</a>
+                    </span>
+                    <span class="navbar-item navbar-off">
+                        <a class="navbar-item" href="{{ url_for('login_page') }}">Log in</a>
+                    </span>
+                    {% else %}
+                    <span class="navbar-item navbar-off">
+                        <a class="navbar-item" href="{{ url_for('student_page', member_id= current_user.username) }}">Profile Page</a>
+                    </span>
+                    {% endif %}
+                    <span class="navbar-item navbar-off">
+                        <a class="navbar-item" href="{{ url_for('clubs_page') }}">Club List</a>
+                    </span>
+                    <span class="navbar-item navbar-off">
+                        <a class="navbar-item" href="{{ url_for('create_club') }}">Create a Club</a>
+                    </span>
+                    <span class="navbar-item navbar-off">
+                        <a class="navbar-item" href="{{ url_for('students_page') }}">Student List</a>
+                    </span>
+                </div>
+                {% if current_user.is_authenticated %}
+                <div class="navbar-menu">
+                    <span class="navbar-item navbar-end bg-red">
+                        <a class="navbar-item" href="{{ url_for('logout_page') }}">Log out</a>
+                    </span>
+                </div>
+                {% endif %}
+            </nav>
+        </header>
+        <main>
+            <section class="section">
+                <div class="content">
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            <div class = "notification is-primary">
+                                <button class="delete"></button>
+                                {% for message in messages %}
+                                {{ message }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                    {% block content %}{% endblock %}
+                </div>
+            </section>
+        </main>
+    </body>
+</html>

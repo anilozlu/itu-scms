@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+{% block title %} Clubs {% endblock %}
+{% block content %}
+    <p class="subtitle">Total number of members this club has: {{count}}</p>
+    <form action="" method="post">
+    {% if member_of %}
+        {% if admin %}
+            <button class = "button is-primary is-pulled-right" name="club_join" value="edit">Edit</button>
+        {% else %}
+            <button class = "button is-primary is-pulled-right" name="club_join" value="leave">Leave</button>
+        {% endif %}
+    {% else %}
+        <button class = "button is-primary is-pulled-right" name="club_join" value="join">Join</button>
+    {% endif %}
+    </form>
+        <table class="table">
+            <tr>
+                <th>Club Name</th>
+                <th>Club Description</th>
+                {% if admin %}
+                <th></th>
+                {% endif %}
+            </tr>
+            <tr>
+                {% for element in club %}
+                <td>{{element}}</td>
+                {% endfor %}
+                {% if admin %}
+                <td></td>
+                {% endif %}
+            </tr>
+            <tr>
+                <th>Member Names</th>
+                <th>Member E-mails</th>
+                {% if admin %}
+                <th>Kick Member</th>
+                {% endif %}
+            </tr>
+                {% if members %}
+                    {% for member in members %}
+                    <tr>
+                    <td><a href="{{ url_for('student_page', member_id=member[0]) }}">{{member[1]}}</a></td>
+                    <td>{{member[2]}}</td>
+                    {% if admin and member[0] != current_user.username %}
+                        <td>
+                            <form action="" method="post">
+                                <button class = "button is-danger" name="member_kick" value={{member[0]}}>Kick</button>
+                            </form>
+                        </td>
+                    {% endif %}
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <th>Event Name</th>
+                    <th>Event Description</th>
+                    {% if admin %}
+                    <th></th>
+                    {% endif %}
+                </tr>
+                {% endif %}
+                {% if events %}
+                    {% for event in events %}
+                    <tr>
+                        <td><a href="">{{event[2]}}</a></td>
+                        <td>{{event[1]}}</td>
+                        {% if admin %}
+                            <td></td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+        </table>
+        <form action="" method="post">
+            <button class = "button is-primary is-pulled-right is-large" name="create_event" value={{club[0]}}>Create Event</button>
+        </form>
+{% endblock %}

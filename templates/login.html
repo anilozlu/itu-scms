@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block title %} Log in {% endblock %}
+{% block content %}
+        <h1 class="title">Log in to your account here!</h1>
+        <p class="subtitle">You need to register with your itu.edu.tr email address to use this site.</p>
+        <form action="" method="post" name="club_create">
+            {{ form.csrf_token }}
+            <div class="field">
+                <label for="mail" class="label">Email address</label>
+                <div class="control">
+                    {{ form.username(required=True, autofocus=True, class='input', placeholder='Email') }}
+                </div>
+            </div>
+            <div class="field">
+                <label for="password" class="label">Password</label>
+                <div class="control">
+                    {{ form.password(required=True, class='input', placeholder='Password')}}
+                </div>
+            </div>
+            <div class="field is-grouped">
+                <div class="control">
+                    <button class="button is-primary">Log in</button>
+                </div>
+            </div>
+        </form>
+{% endblock %}

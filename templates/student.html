@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block title %} Clubs {% endblock %}
+{% block content %}
+    <p class="subtitle">Total number of clubs this student is a member of: {{count}}</p>
+        <table class="table">
+            <tr>
+                <th>Student Name</th>
+                <th>Student E-mail</th>
+            </tr>
+            <tr>
+                {% for mem in member %}
+                    {% for element in mem %}
+                    <td>{{element}}</td>
+                    {% endfor %}
+                {% endfor %}
+            </tr>
+            <tr>
+                <th>Club Names</th>
+            </tr>
+            {% if clubs %}
+                {% for club in clubs %}
+                    {% for element in club[1:] %}
+                    <tr>
+                    <td><a href="{{ url_for('club_page', club_id=club[0]) }}">{{element}}</a></td>
+                    </tr>
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+        </table>
+{% endblock %}
