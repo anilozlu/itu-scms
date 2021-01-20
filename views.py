@@ -219,28 +219,35 @@ def club_page(club_id):
     return render_template("club.html", club=club[0], members=members, member_of=member_of, admin=admin, count=count, events=events)
 @login_required
 def student_page(member_id):
-    mycursor.execute("""SELECT COUNT(Club_students.user_id)
-                        FROM Club_students
-                        INNER JOIN Student_clubs
-                        ON Club_students.user_id=Student_clubs.user_id AND Club_students.club_id=Student_clubs.club_id
-                        WHERE Club_students.user_id = """ + str(member_id) + " GROUP BY Club_students.user_id;")
-    count = list(mycursor)
-    count = count[0][0] if count else 0
-    mycursor.execute("SELECT full_name, mail FROM Students WHERE user_id = '" + str(member_id) + "';")
-    student = list(mycursor)
-    mycursor.execute("SELECT club_id FROM Student_clubs WHERE user_id = '" + str(member_id) + "';")
-    club_ids = list(mycursor)
-    if club_ids:
-        club_id = "("
-        for club in club_ids:
-            for c_id in club:
-                club_id += str(c_id) + ", "
-        club_id = club_id[:-2] + ")"
-        mycursor.execute("SELECT club_id, name FROM Clubs WHERE club_id IN " + club_id + ";")
-        clubs = list(mycursor)
-    else:
-        clubs = None
-    return render_template("student.html", member=student, clubs=clubs, count=count)
+    if request.method == "GET":
+        mycursor.execute("""SELECT COUNT(Club_students.user_id)
+                            FROM Club_students
+                            INNER JOIN Student_clubs
+                            ON Club_students.user_id=Student_clubs.user_id AND Club_students.club_id=Student_clubs.club_id
+                            WHERE Club_students.user_id = """ + str(member_id) + " GROUP BY Club_students.user_id;")
+        count = list(mycursor)
+        count = count[0][0] if count else 0
+        mycursor.execute("SELECT user_id, full_name, mail FROM Students WHERE user_id = '" + str(member_id) + "';")
+        student = list(mycursor)[0]
+        mycursor.execute("SELECT club_id FROM Student_clubs WHERE user_id = '" + str(member_id) + "';")
+        club_ids = list(mycursor)
+        if club_ids:
+            club_id = "("
+            for club in club_ids:
+                for c_id in club:
+                    club_id += str(c_id) + ", "
+            club_id = club_id[:-2] + ")"
+            mycursor.execute("SELECT club_id, name FROM Clubs WHERE club_id IN " + club_id + ";")
+            clubs = list(mycursor)
+        else:
+            clubs = None
+        return render_template("student.html", member=student, clubs=clubs, count=count)
+    elif "student_delete" in request.form:
+        mycursor.execute("DELETE FROM Students WHERE user_id = {};".format(member_id))
+        mydb.commit()
+        flash("You have successfully deleted your account.")
+        return redirect(url_for("home_page"))
+
 @login_required
 def edit_club(club_id):
     mycursor.execute("SELECT role FROM Student_clubs WHERE user_id = '" + str(current_user.username) + "' AND club_id = '" + str(club_id) + "';")
@@ -253,6 +260,11 @@ def edit_club(club_id):
     if request.method == "GET":
         return render_template("edit_club.html", club=club)
     else:
+        if "club_delete" in request.form:
+            mycursor.execute("DELETE FROM Clubs WHERE club_id= {};".format(club_id))
+            mydb.commit()
+            flash("Club deleted.")
+            return redirect(url_for("clubs_page"))
         club_name = request.form["name"]
         club_description = request.form["description"]
         mycursor.execute("UPDATE Clubs SET name = '" + club_name + "', description = '" + club_description + "' WHERE club_id = '" + str(club_id) + "';")
