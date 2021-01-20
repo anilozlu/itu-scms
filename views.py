@@ -247,7 +247,20 @@ def student_page(member_id):
         mydb.commit()
         flash("You have successfully deleted your account.")
         return redirect(url_for("home_page"))
-
+    elif "student_edit" in request.form:
+        return redirect(url_for("edit_student", user_id=member_id))
+@login_required
+def edit_student(user_id):
+    if request.method == "GET":
+        mycursor.execute("SELECT user_id, full_name, mail FROM Students WHERE user_id={};".format(user_id))
+        student = list(mycursor)[0]
+        return render_template("edit_student.html", student=student)
+    else:
+        name = request.form["name"]
+        mycursor.execute("UPDATE Students SET full_name = '{}' WHERE user_id={};".format(name, user_id))
+        mydb.commit()
+        flash("You have successfully updated your name.")
+        return redirect(url_for("student_page", member_id=user_id))
 @login_required
 def edit_club(club_id):
     mycursor.execute("SELECT role FROM Student_clubs WHERE user_id = '" + str(current_user.username) + "' AND club_id = '" + str(club_id) + "';")

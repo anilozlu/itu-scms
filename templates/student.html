@@ -30,4 +30,9 @@
                 {% endfor %}
             {% endif %}
         </table>
+        {%if member[0] == current_user.username %}
+        <form action="" method="post">
+            <button class = "button is-primary is-pulled-right" name="student_edit" value="edit">Edit</button>
+        </form>
+        {% endif %}
 {% endblock %}

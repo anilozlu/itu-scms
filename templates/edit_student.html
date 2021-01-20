@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block title %} Edit Student {% endblock %}
+{% block content %}
+        <h1 class="title">Here, you can edit your name.</h1>
+        <form action="" method="post" name="student_edit">
+            <div class="field">
+                <label for="name" class="label">Your Name</label>
+                <div class="control">
+                    <input type="text" name="name" class="input" required="required" value="{{student[1]}}" placeholder="Put your name here."/>
+                </div>
+            </div>
+            <div class="field">
+                <label for="mail" class="label">Mail</label>
+                <div class="control">
+                    <input type="text" name="name" class="input" value="{{student[2]}}" placeholder="Put your mail here." disabled/>
+                </div>
+            </div>
+            <div class="field is-grouped">
+                <div class="control">
+                    <button class="button is-primary">Edit</button>
+                </div>
+            </div>
+        </form>
+{% endblock %}
